@@ -1,0 +1,83 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <time.h>
+
+int pow1(int a, int b); 
+
+int generateRandomNumber(int len); 
+
+int isUnique(int generatedDigit, int chislo, int position, int len); 
+
+int maxnumber(int chislo, int len); 
+
+int main() {
+    srand((unsigned) time(NULL));
+    int len; 
+    printf("Введите число от 1 до 9");
+    scanf("%d", &len);
+    int chislo = generateRandomNumber(len); 
+    int maxnum = maxnumber(chislo, len);
+    printf("%d %d ", chislo, maxnum);
+}
+
+int pow1(int a, int b) {
+    int result = 1; 
+    for (int i = 0; i < b; i++) {
+        result *= a;
+    }
+    return result;
+}
+
+int generateRandomNumber(int len) {
+    int result = 0; 
+    for (int i = len; i > 0; i--) {
+
+        int a = rand() % 9 + 1; 
+        while ( (isUnique(a, result, i, len)) == 0) { 
+            a = rand() % 9 + 1; 
+        }
+        result += a * pow1(10, i - 1);
+    }
+    return result;
+}
+
+int isUnique(int generatedDigit, int chislo, int position, int len) { 
+    int flag = 1; 
+    for (int i = position; i < len; i++) { 
+        int currentDigit = chislo % pow1(10, i + 1) / pow1(10, i); 
+        if (generatedDigit == currentDigit) { 
+            flag = 0;
+            break;
+        }
+    } 
+    return flag;
+}
+
+int maxnumber(int chislo, int len) {
+    int lenmaxnum = 1; 
+    int maxnum = 0; 
+    int findmaxnum = 0; 
+    int lenmaxnum1 = 0; 
+    for (int i = len; i > 0; i -= lenmaxnum){ 
+
+        lenmaxnum = 1; 
+        int digitstart = chislo % pow1(10, i) / pow1(10, i - 1);
+        findmaxnum = digitstart; 
+        for (int j = i - 1; j > 0; j--){ 
+            int digitnow = chislo % pow1(10, j) / pow1(10, j - 1); 
+            
+            if (digitstart < digitnow) { 
+                findmaxnum = findmaxnum * 10 + digitnow;
+                lenmaxnum += 1; 
+            } else {
+                break;
+            }
+            digitstart = digitnow; 
+        }
+        if (lenmaxnum > lenmaxnum1) { 
+        maxnum = findmaxnum; 
+        lenmaxnum1 = lenmaxnum; 
+        }
+    }        
+    return maxnum;
+}
